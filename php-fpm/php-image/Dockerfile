@@ -5,7 +5,8 @@
 #
 
 ARG PHP_VERSION
-FROM php:${PHP_VERSION}-fpm
+ARG BASE_IMAGE_TAG_PREFIX=latest
+FROM laradock/php-fpm:${BASE_IMAGE_TAG_PREFIX}-${PHP_VERSION}
 
 # Set Environment Variables
 ENV DEBIAN_FRONTEND noninteractive
@@ -14,43 +15,6 @@ ENV DEBIAN_FRONTEND noninteractive
 RUN sed -i 's/deb.debian.org/mirrors.tuna.tsinghua.edu.cn/' /etc/apt/sources.list && \
     sed -i 's/security.debian.org/mirrors.tuna.tsinghua.edu.cn/' /etc/apt/sources.list && \
     sed -i 's/security-cdn.debian.org/mirrors.tuna.tsinghua.edu.cn/' /etc/apt/sources.list;
-
-#
-#--------------------------------------------------------------------------
-# Software's Installation
-#--------------------------------------------------------------------------
-#
-# Installing tools and PHP extentions using "apt", "docker-php", "pecl",
-#
-# Install "curl", "libmemcached-dev", "libpq-dev", "libjpeg-dev",
-#         "libpng-dev", "libfreetype6-dev", "libssl-dev", "libmcrypt-dev",
-RUN set -eux; \
-    apt-get update; \
-    apt-get upgrade -y; \
-    apt-get install -y --no-install-recommends \
-            curl \
-            libmemcached-dev \
-            libz-dev \
-            libpq-dev \
-            libjpeg-dev \
-            libpng-dev \
-            libfreetype6-dev \
-            libssl-dev \
-            libmcrypt-dev \
-            libonig-dev; \
-    rm -rf /var/lib/apt/lists/*
-
-RUN set -eux; \
-    # Install the PHP pdo_mysql extention
-    docker-php-ext-install pdo_mysql; \
-    # Install the PHP pdo_pgsql extention
-    docker-php-ext-install pdo_pgsql; \
-    # Install the PHP gd library
-    docker-php-ext-configure gd \
-            --with-jpeg-dir=/usr/lib \
-            --with-freetype-dir=/usr/include/freetype2; \
-    docker-php-ext-install gd; \
-    php -r 'var_dump(gd_info());'
 
 # always run apt update when start and after add new source list, then clean up at end.
 RUN set -xe; \
@@ -874,6 +838,16 @@ RUN curl -sS https://install.phpcomposer.com/installer | php -- --install-dir=/u
 RUN composer config -g repo.packagist composer https://mirrors.aliyun.com/composer/
 
 ###########################################################################
+# Crontab
+###########################################################################
+
+RUN apt-get install cron -y
+
+COPY ./crontab /etc/cron.d
+
+RUN chmod -R 644 /etc/cron.d
+
+###########################################################################
 # Check PHP version:
 ###########################################################################
 
@@ -892,6 +866,8 @@ ENV PGID ${PGID}
 
 RUN groupmod -o -g ${PGID} www-data && \
     usermod -o -u ${PUID} -g www-data www-data
+
+RUN crontab -u www-data /etc/cron.d/crontab
 
 # Configure locale.
 ARG LOCALE=POSIX
