@@ -11,7 +11,7 @@ services:
         - PHP_UPSTREAM_CONTAINER=${NGINX_PHP_UPSTREAM_CONTAINER}
         - PHP_UPSTREAM_PORT=${NGINX_PHP_UPSTREAM_PORT}
         - NGINX_VERSION=${NGINX_VERSION}
-    image: nginx
+    image: nginx:${NGINX_PHP_UPSTREAM_CONTAINER}
     container_name: nginx
     restart: always
     volumes:
@@ -99,7 +99,7 @@ services:
         - PUID=${PHP_FPM_PUID}
         - PGID=${PHP_FPM_PGID}
         - LOCALE=${PHP_FPM_DEFAULT_LOCALE}
-    image: php-fpm
+    image: php-fpm:${PHP_VERSION}
     container_name: php-fpm
     restart: always
     ports:
