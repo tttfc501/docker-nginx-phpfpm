@@ -8,6 +8,7 @@ ARG PHP_VERSION
 ARG BASE_IMAGE_TAG_PREFIX=latest
 FROM laradock/php-fpm:${BASE_IMAGE_TAG_PREFIX}-${PHP_VERSION}
 
+ARG PHP_VERSION
 # Set Environment Variables
 ENV DEBIAN_FRONTEND noninteractive
 
