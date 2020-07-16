@@ -45,7 +45,7 @@ services:
     build:
       context: php-fpm/php-image
       args:
-        - PHP_VERSION=${PHP_VERSION}
+        - PROJECT_PHP_VERSION=${PHP_VERSION}
         - INSTALL_BZ2=${PHP_FPM_INSTALL_BZ2}
         - INSTALL_GMP=${PHP_FPM_INSTALL_GMP}
         - INSTALL_XDEBUG=${PHP_FPM_INSTALL_XDEBUG}

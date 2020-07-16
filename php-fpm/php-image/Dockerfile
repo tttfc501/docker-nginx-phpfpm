@@ -4,11 +4,11 @@
 #--------------------------------------------------------------------------
 #
 
-ARG PHP_VERSION
+ARG PROJECT_PHP_VERSION
 ARG BASE_IMAGE_TAG_PREFIX=latest
-FROM laradock/php-fpm:${BASE_IMAGE_TAG_PREFIX}-${PHP_VERSION}
+FROM laradock/php-fpm:${BASE_IMAGE_TAG_PREFIX}-${PROJECT_PHP_VERSION}
 
-ARG PHP_VERSION
+ARG PROJECT_PHP_VERSION
 # Set Environment Variables
 ENV DEBIAN_FRONTEND noninteractive
 
@@ -28,7 +28,7 @@ RUN set -xe; \
       # Mandatory Software's Installation
       #--------------------------------------------------------------------------
       libzip-dev zip unzip && \
-      if [ ${PHP_VERSION} = "7.3" ] || [ ${PHP_VERSION} = "7.4" ]; then \
+      if [ ${PROJECT_PHP_VERSION} = "7.3" ] || [ ${PROJECT_PHP_VERSION} = "7.4" ]; then \
         docker-php-ext-configure zip; \
       else \
         docker-php-ext-configure zip --with-libzip; \
@@ -197,7 +197,7 @@ ARG INSTALL_PHPDBG=false
 
 RUN if [ ${INSTALL_PHPDBG} = true ]; then \
     # Load the xdebug extension only with phpunit commands
-    apt-get install -y --force-yes php${PHP_VERSION}-phpdbg \
+    apt-get install -y --force-yes php${PROJECT_PHP_VERSION}-phpdbg \
 ;fi
 
 ###########################################################################
@@ -491,7 +491,7 @@ RUN if [ ${INSTALL_IONCUBE} = true ]; then \
     # Install the php ioncube loader
     curl -L -o /tmp/ioncube_loaders_lin_x86-64.tar.gz https://downloads.ioncube.com/loader_downloads/ioncube_loaders_lin_x86-64.tar.gz \
     && tar zxpf /tmp/ioncube_loaders_lin_x86-64.tar.gz -C /tmp \
-    && mv /tmp/ioncube/ioncube_loader_lin_${PHP_VERSION}.so $(php -r "echo ini_get('extension_dir');")/ioncube_loader.so \
+    && mv /tmp/ioncube/ioncube_loader_lin_${PROJECT_PHP_VERSION}.so $(php -r "echo ini_get('extension_dir');")/ioncube_loader.so \
     && printf "zend_extension=ioncube_loader.so\n" > $PHP_INI_DIR/conf.d/0ioncube.ini \
     && rm -rf /tmp/ioncube* \
 ;fi
@@ -852,7 +852,7 @@ RUN chmod -R 644 /etc/cron.d
 # Check PHP version:
 ###########################################################################
 
-RUN set -xe; php -v | head -n 1 | grep -q "PHP ${PHP_VERSION}."
+RUN set -xe; php -v | head -n 1 | grep -q "PHP ${PROJECT_PHP_VERSION}."
 
 # Clean up
 RUN apt-get clean && \
