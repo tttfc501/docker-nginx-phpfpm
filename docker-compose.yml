@@ -11,7 +11,7 @@ services:
         - PHP_UPSTREAM_CONTAINER=${NGINX_PHP_UPSTREAM_CONTAINER}
         - PHP_UPSTREAM_PORT=${NGINX_PHP_UPSTREAM_PORT}
         - NGINX_VERSION=${NGINX_VERSION}
-    image: nginx:${NGINX_PHP_UPSTREAM_CONTAINER}
+    image: nginx:${NGINX_VERSION}
     container_name: nginx
     restart: always
     volumes:
